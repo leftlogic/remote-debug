@@ -12,6 +12,8 @@ Articles etc:
 
 - [Remote Debugging in Firefox Mobile](http://lucasr.org/2012/03/28/remote-debugging-in-firefox-mobile/)
 - [WebDriver API spec](http://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html)
+- [Opera Dragonfly Architecture](http://dev.opera.com/articles/view/opera-dragonfly-architecture/)
+- [Scope Interface](http://operasoftware.github.com/scope-interface/)
 
 
 ## 12/10/12
@@ -40,3 +42,11 @@ Articles etc:
 
 - Found [this Remote Debugging talk](http://thecssninja.com/talks/remote_debugging/) very useful for understanding where we stand now.
 - Discovered the [WebDriver API] and the [BTTWG](http://www.w3.org/testing/browser/) – perhaps any tool that pollyfills the above should conform to this spec.
+
+## 16/10/12
+
+**Dragonfly & Dragonkeeper**
+
+- Looked into code to see what Dragonkeeper is doing with data to & from a device.
+- Running dragonkeeper with -df gives a pretty-printed output nice output of what's being sent
+- http://localhost:8002/services is being hit repeatedly hit until the device returns an xml list of services: [http://i.phuu.net/KAX1](http://i.phuu.net/KAX1)
