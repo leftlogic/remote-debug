@@ -5,6 +5,6 @@ Primary aim: to be able to send an alert to any target **without** the native de
 ## Platforms
 
 - Chrome for Android
-✔ Opera Mobile :facepunch:
+- Opera Mobile ✔ :facepunch:
 - Firefox Beta
 - Mobile Safari :trollface:
