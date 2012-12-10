@@ -50,3 +50,39 @@ Articles etc:
 - Looked into code to see what Dragonkeeper is doing with data to & from a device.
 - Running dragonkeeper with -df gives a pretty-printed output nice output of what's being sent
 - http://localhost:8002/services is being hit repeatedly hit until the device returns an xml list of services: [http://i.phuu.net/KAX1](http://i.phuu.net/KAX1)
+
+## 10/12/12
+
+**Firefox Beta**
+
+- [Documentation](https://wiki.mozilla.org/Remote_Debugging_Protocol)
+- An **actor** in an entity on the server (device) that can interact with the client (debugger) via a JSON protocol.
+- The protocol consists of JSON packets:
+  - Client to server: `{ "to": actor, "type": type, ... }`
+  - Server to client: `{ "from": actor, ... }`
+- A **grip** is a JSON representation of some value on the server
+
+### Installing Firefox Beta & hooking up
+
+- [The nightly Beta](http://ftp.mozilla.org/pub/mozilla.org/mobile/nightly/latest-mozilla-central-android/) release APK for the emulator
+- `adb install [path to above]`
+- `adb forward tcp:6000 tcp:6000`
+- Enable `devtools.debugger.remote-enabled` in client Firefox
+- Disable `devtools.debugger.force-local` & enable `devtools.debugger.remote-enabled` in FF Beta on the device
+- Restart all Firefoxes
+- Open Tools > Web Developer > Remote Debugging & connect. Click OK on the device.
+- If in Nightly, go Tools > W D > Connect
+
+### Firefox Nightly connection code:
+
+In Firefox, open:
+
+- jar:file:///Applications/FirefoxNightly.app/Contents/MacOS/omni.ja!/
+
+This file manages the connect page:
+
+- jar:file:///Applications/FirefoxNightly.app/Contents/MacOS/omni.ja!/chrome/browser/content/browser/devtools/connect.js
+
+Debug Clients JSM:
+
+- jar:file:///Applications/FirefoxNightly.app/Contents/MacOS/omni.ja!/modules/devtools/dbg-client.jsm
