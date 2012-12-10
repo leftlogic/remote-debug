@@ -1,6 +1,8 @@
 # Remote Debug
 
-Primary aim: to be able to send an alert to any target **without** the native debugger.
+Primary aim: to be able to send a custom command to any target **without** the native debugger via a terminal command.
+
+i.e. an alert or arbitrary DOM scripting command.
 
 ## Platforms
 
