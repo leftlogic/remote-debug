@@ -86,3 +86,21 @@ This file manages the connect page:
 Debug Clients JSM:
 
 - jar:file:///Applications/FirefoxNightly.app/Contents/MacOS/omni.ja!/modules/devtools/dbg-client.jsm
+
+
+### Attempting to connect
+
+- Websocket client threw errors from the http parser
+- `request('http://localhost:6002').pipe(process.stdout);` also threw
+
+The flow in FF:
+
+- `connect.js` creates a transport by running `debuggerSocketConnect` in dgb-client.js
+  - this creates `s` (an nsISocketTransport) using [socketTransportService.createTransport](https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsISocketTransportService#createTransport())
+  - it's passed the default socket type, a hostname and port, returning an instance of [nsISocketTransport](https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsISocketTransport)
+  - then a `transport` (DebuggerTransport) is created from `s.openInputStream` and `s.openOutputStream` of the nsISocketTransport, inherited from the [nsITransport](https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsITransport)
+  - the transport is an non-blocking i/o stream handler
+
+Connected!
+
+Used node's `net` module to open a socket on the 6002 port. **It works!**
