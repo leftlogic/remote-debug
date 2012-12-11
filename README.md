@@ -8,5 +8,5 @@ i.e. an alert or arbitrary DOM scripting command.
 
 - Chrome for Android
 - Opera Mobile ✔ :facepunch:
-- Firefox Beta
+- Firefox Beta ✔ :dancers:
 - Mobile Safari :trollface:
