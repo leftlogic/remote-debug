@@ -53,6 +53,22 @@ var interrupt = function (client, actor) {
   });
 };
 
+var start_listeners = function (client, actor) {
+  write(client, {
+    to: actor,
+    type: "startListeners",
+    listeners: ["ConsoleAPI"]
+  });
+};
+
+var evaluate_js = function (client, actor, js) {
+  write(client, {
+    to: actor,
+    type: "evaluateJS",
+    text: js
+  });
+};
+
 var opts = {
   host: 'localhost',
   port: 6002
@@ -71,12 +87,11 @@ client.on('data', function(data) {
     get_tabs(client);
   }
   if( packet.tabs ) {
-    attach(client, packet.tabs[0].actor);
+    start_listeners(client, packet.tabs[1].consoleActor);
   }
-  if( packet.type === "tabAttached" ) {
-    resume(client, packet.threadActor);
+  if( packet.nativeConsoleAPI ) {
+    evaluate_js(client, packet.from, 'document.title = "Hello.";');
   }
-
 });
 
 client.on('end', function() {
