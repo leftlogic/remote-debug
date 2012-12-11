@@ -10,3 +10,5 @@ i.e. an alert or arbitrary DOM scripting command.
 - Opera Mobile ✔ :facepunch:
 - Firefox Beta ✔ :dancers:
 - Mobile Safari :trollface:
+- IE10 (?)
+- EVERY OTHER BROWSER :scream:
