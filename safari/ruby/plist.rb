@@ -10,8 +10,9 @@ s.connect Socket.pack_sockaddr_in(27753, '::1')
 def send(s, data)
   plist = CFPropertyList::List.new
   plist.value = CFPropertyList.guess(data)
-  s.write [plist.to_str.length].pack('L>')
+  s.write [plist.to_str.length].pack('N')
   s.write plist.to_str
+  puts plist.to_str
 end
 
 id = uuid.generate
@@ -33,8 +34,9 @@ send(s, {
 #   '__selector' => '_rpc_forwardGetListing:'
 # })
 
-while line = s.gets # Read lines from socket
-  puts line         # and print them
+while line = s.gets
+  puts 'msg'
+  puts line
 end
 
-s.close             # close socket when done
+s.close
