@@ -5,6 +5,7 @@ var bplist_parse = require('bplist-parser');
 var bufferpack = require('bufferpack');
 var uuid = require('node-uuid');
 var colors = require('colors');
+var util = require('util');
 
 var log = console.log.bind(console);
 var noop = function () {};
@@ -61,11 +62,8 @@ var read_pos = 0;
 
 socket.on('data', function (data) {
 
-  var old_read_pos = read_pos;
-
   log();
   log('=========== data ==========='.red);
-  log('read_pos:', read_pos);
   log();
 
   recieved = Buffer.concat([recieved, data]);
@@ -73,6 +71,11 @@ socket.on('data', function (data) {
   var data_left_over = true; 
 
   while( data_left_over ) {
+  
+    log('read_pos:', read_pos);
+    log();
+
+    var old_read_pos = read_pos;
 
     log();
     log('data');
@@ -94,12 +97,12 @@ socket.on('data', function (data) {
     log('slicing from %d -> %d', read_pos, read_pos + msg_length);
     log('/prefix');
 
-    var body = recieved.slice(read_pos, msg_length + read_pos);
-
-    if( body.length < msg_length ) {
+    if( recieved.length < msg_length + read_pos ) {
       read_pos = old_read_pos;
       break;
     }
+
+    var body = recieved.slice(read_pos, msg_length + read_pos);
 
     log();
     log('body');
@@ -121,7 +124,7 @@ socket.on('data', function (data) {
 
     log();
     log('plist');
-    log(plist);
+    log(util.inspect(plist, false, null));
     log('/plist');
 
     read_pos += msg_length;
@@ -134,13 +137,15 @@ socket.on('data', function (data) {
       log('Read pos reset from %d', read_pos);
       var chunk = new Buffer(left_over);
       recieved.copy(chunk, 0, read_pos);
-      read_pos = 0;
       recieved = chunk;
+      read_pos = 0;
       log('Recieved now %d long', recieved.length);
       log('/left_over');
     } else {
+      recieved = new Buffer(0);
       data_left_over = false;
     }
+      read_pos = 0;
 
     // Now do something with the plist
     if( plist ) {
