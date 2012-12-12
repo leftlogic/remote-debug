@@ -4,6 +4,7 @@ var bplist_create = require('node-bplist-creator');
 var bplist_parse = require('bplist-parser');
 var bufferpack = require('bufferpack');
 var uuid = require('node-uuid');
+var colors = require('colors');
 
 var log = console.log.bind(console);
 var noop = function () {};
@@ -20,13 +21,14 @@ var conn_id = uuid.v4();
 
 var raw_send = function (socket, data) {
 
-  log("OUT:");
+  log();
+  log("=========== OUT ===========".blue);
   log(data);
 
   var plist = bplist_create(data);
   
   socket.write(bufferpack.pack('L', [plist.length]));
-  socket.write(plist, 'binary');
+  socket.write(plist);
 };
 
 var send = noop;
@@ -47,26 +49,106 @@ var handlers = {
 
 var handle = function (plist) {
   if( ! plist.__selector ) return;
+  log();
   log('handle', plist.__selector.slice(0, -1));
   (handlers[plist.__selector.slice(0, -1)] || noop)(plist);
 };
 
 /* SOCKET */
 
-socket.on('data', function(data) {
-  log('\n\ndata');
-  log('first 4:');
-  log(data.slice(0, 4));
-  log(bufferpack.unpack('L', data.slice(0, 4)));
-  log('the rest:');
-  log(data.slice(4));
-  log(data.slice(4).toString());
-  if( data.length <= 4 ) return;
-  var plist = bplist_parse.parseBuffer(data.slice(4))[0];
-  log(plist);
-  if( plist ) {
-    handle(plist);
+var recieved = new Buffer(0);
+var read_pos = 0;
+
+socket.on('data', function (data) {
+
+  var old_read_pos = read_pos;
+
+  log();
+  log('=========== data ==========='.red);
+  log('read_pos:', read_pos);
+  log();
+
+  recieved = Buffer.concat([recieved, data]);
+
+  var data_left_over = true; 
+
+  while( data_left_over ) {
+
+    log();
+    log('data');
+    log(data);
+    log(data.toString().green);
+    log(data.length);
+    log('/data');
+
+    var prefix = recieved.slice(read_pos, read_pos + 4);
+    var msg_length = bufferpack.unpack('L', prefix)[0];
+
+    read_pos += 4;
+
+    log();
+    log('prefix');
+    log(prefix);
+    log(msg_length);
+    log('%d -> %d', read_pos, read_pos + msg_length);
+    log('slicing from %d -> %d', read_pos, read_pos + msg_length);
+    log('/prefix');
+
+    var body = recieved.slice(read_pos, msg_length + read_pos);
+
+    if( body.length < msg_length ) {
+      read_pos = old_read_pos;
+      break;
+    }
+
+    log();
+    log('body');
+    log(body);
+    log(body.toString().green);
+    log(body.length);
+    log('/body');
+
+    var plist;
+    try {
+      plist = bplist_parse.parseBuffer(body);
+    } catch (e) {
+      console.log(e);
+    }
+
+    if( plist.length === 1 ) {
+      plist = plist[0];
+    }
+
+    log();
+    log('plist');
+    log(plist);
+    log('/plist');
+
+    read_pos += msg_length;
+
+    var left_over = recieved.length - read_pos;
+
+    if( left_over !== 0 ) {
+      log('left_over');
+      log('%d left over.', left_over);
+      log('Read pos reset from %d', read_pos);
+      var chunk = new Buffer(left_over);
+      recieved.copy(chunk, 0, read_pos);
+      read_pos = 0;
+      recieved = chunk;
+      log('Recieved now %d long', recieved.length);
+      log('/left_over');
+    } else {
+      data_left_over = false;
+    }
+
+    // Now do something with the plist
+    if( plist ) {
+      handle(plist);
+    }
+
   }
+
 });
 
 socket.on('close', function() {
