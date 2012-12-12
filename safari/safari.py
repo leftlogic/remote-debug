@@ -8,7 +8,7 @@ ws = WebSocket()
 
 # if ipv6
 ws.io_sock = ws.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-ws.connect("ws://localhost:27753/")
+ws.connect("ws://localhost:9999/devtools/page/1")
 
 counter = 0
 
