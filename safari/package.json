@@ -8,10 +8,7 @@
     "bufferpack": "0.0.6",
     "node-bplist-creator": "~0.0.1",
     "node-uuid": "~1.4.0",
-    "plist": "~0.4.1",
-    "websocket": "~1.0.7",
-    "websocket.io": "~0.2.1",
-    "ws": "~0.4.24"
+    "plist": "~0.4.1"
   },
   "devDependencies": {},
   "scripts": {
