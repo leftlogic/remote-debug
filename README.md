@@ -1,8 +1,8 @@
 # Remote Debug
 
-Primary aim: to be able to send a custom command to any target **without** the native debugger via a terminal command.
+Current aim: to be able to send a custom command to any target **without** the native debugger via a terminal command.
 
-i.e. an alert or arbitrary DOM scripting command.
+To see where we're headed, check the [Roadmap](roadmap.md).
 
 ## Platforms
 
