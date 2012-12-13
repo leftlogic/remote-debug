@@ -10,14 +10,16 @@ var util = require('util');
 var log = console.log.bind(console);
 var noop = function () {};
 
+var run = false;
+
 // var extract_plist = function (str) {
 //   var buffer = new Buffer(str.split(' ').map(function (val) { return parseInt(val, 16); }));
 //   return bplist_parse.parseBuffer(buffer);
 // };
 
 var socket = new net.Socket({type: 'tcp6'});
-var conn_id = uuid.v4();
-var sender_id = uuid.v4();
+var conn_id = '17858421-36EF-4752-89F7-7A13ED5782C5';
+var sender_id = 'DCAE5BF4-6CA4-4F37-B420-4A2A6B553D0C';
 
 /* SENDING */
 
@@ -58,47 +60,27 @@ var handlers = {
     });
   },
   _rpc_applicationSentListing: function (plist) {
-    // Make the inspector highlight a particular view
+
+    if( run ) return log("Run already.".red);
+
+    run = true;
+
     send({
       __argument: {
         WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
-        WIRIndicateEnabledKey: true,
         WIRConnectionIdentifierKey: conn_id,
+        WIRSenderKey: sender_id,
         WIRPageIdentifierKey: 1
       },
-      __selector: '_rpc_forwardIndicateWebView:'
+      __selector: '_rpc_forwardSocketSetup:'
     });
-    
-    setTimeout(function () {
-      send({
-        __argument: {
-          WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
-          WIRIndicateEnabledKey: false,
-          WIRConnectionIdentifierKey: conn_id,
-          WIRPageIdentifierKey: 1
-        },
-        __selector: '_rpc_forwardIndicateWebView:'
-      });
-    }, 3000);
-
-    setTimeout(function () {
-      send({
-        __argument: {
-          WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
-          WIRConnectionIdentifierKey: conn_id,
-          WIRSenderKey: sender_id,
-          WIRPageIdentifierKey: 1
-        },
-        __selector: '_rpc_forwardSocketSetup:'
-      });
-    }, 5000);
 
     
     // send({
     //   __argument: {
     //     WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
     //     WIRSocketDataKey: new Buffer(JSON.stringify({
-    //       method: "Debugger.enable",
+    //       method: "Runtime.enable",
     //       id: 1
     //     })),
     //     WIRConnectionIdentifierKey: conn_id,
@@ -146,30 +128,30 @@ socket.on('data', function (data) {
 
   while( data_left_over ) {
   
-    log('read_pos:', read_pos);
-    log();
+    // log('read_pos:', read_pos);
+    // log();
 
     var old_read_pos = read_pos;
 
-    log();
-    log('data');
-    log(data);
-    log(data.toString().green);
-    log(data.length);
-    log('/data');
+    // log();
+    // log('data');
+    // log(data);
+    // log(data.toString().green);
+    // log(data.length);
+    // log('/data');
 
     var prefix = recieved.slice(read_pos, read_pos + 4);
     var msg_length = bufferpack.unpack('L', prefix)[0];
 
     read_pos += 4;
 
-    log();
-    log('prefix');
-    log(prefix);
-    log(msg_length);
-    log('%d -> %d', read_pos, read_pos + msg_length);
-    log('slicing from %d -> %d', read_pos, read_pos + msg_length);
-    log('/prefix');
+    // log();
+    // log('prefix');
+    // log(prefix);
+    // log(msg_length);
+    // log('%d -> %d', read_pos, read_pos + msg_length);
+    // log('slicing from %d -> %d', read_pos, read_pos + msg_length);
+    // log('/prefix');
 
     if( recieved.length < msg_length + read_pos ) {
       read_pos = old_read_pos;
@@ -178,12 +160,12 @@ socket.on('data', function (data) {
 
     var body = recieved.slice(read_pos, msg_length + read_pos);
 
-    log();
-    log('body');
-    log(body);
-    log(body.toString().green);
-    log(body.length);
-    log('/body');
+    // log();
+    // log('body');
+    // log(body);
+    // log(body.toString().green);
+    // log(body.length);
+    // log('/body');
 
     var plist;
     try {
@@ -197,24 +179,24 @@ socket.on('data', function (data) {
     }
 
     log();
-    log('plist');
+    log('plist'.green);
     log(util.inspect(plist, false, null));
-    log('/plist');
+    log('/plist'.green);
 
     read_pos += msg_length;
 
     var left_over = recieved.length - read_pos;
 
     if( left_over !== 0 ) {
-      log('left_over');
-      log('%d left over.', left_over);
-      log('Read pos reset from %d', read_pos);
+      // log('left_over');
+      // log('%d left over.', left_over);
+      // log('Read pos reset from %d', read_pos);
       var chunk = new Buffer(left_over);
       recieved.copy(chunk, 0, read_pos);
       recieved = chunk;
       read_pos = 0;
-      log('Recieved now %d long', recieved.length);
-      log('/left_over');
+      // log('Recieved now %d long', recieved.length);
+      // log('/left_over');
     } else {
       recieved = new Buffer(0);
       data_left_over = false;

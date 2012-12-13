@@ -46,16 +46,24 @@
            WIRURLKey: 'http://www.google.co.uk/webhp?hl=en&tbm=isch&tab=ii' } } } }
 ```
 
+### CLICK PAGE
+
 - Debugger > Mobile Safari
 
 ```
+{ __argument: 
+   { WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
+     WIRIndicateEnabledKey: false,
+     WIRConnectionIdentifierKey: '17858421-36EF-4752-89F7-7A13ED5782C5',
+     WIRPageIdentifierKey: 1 },
+  __selector: '_rpc_forwardIndicateWebView:' } 
+
 { __argument: 
    { WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
      WIRConnectionIdentifierKey: '17858421-36EF-4752-89F7-7A13ED5782C5',
      WIRSenderKey: 'DCAE5BF4-6CA4-4F37-B420-4A2A6B553D0C',
      WIRPageIdentifierKey: 1 },
   __selector: '_rpc_forwardSocketSetup:' }
-
 
 { __argument: 
    { WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
@@ -101,6 +109,7 @@
 - Mobile Safari > Debugger
 
 ```
+// Typical response to the above
 { __selector: '_rpc_applicationSentData:',
   __argument: 
    { WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
