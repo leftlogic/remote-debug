@@ -27,7 +27,7 @@
 
 ## 1.0
 
-- Party time :party:
+- Party time :facepunch:
 
 ## 1.x
 
