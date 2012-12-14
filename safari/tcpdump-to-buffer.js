@@ -3,7 +3,7 @@ var bufferpack = require('bufferpack');
 var util = require('util');
 var fs = require('fs');
 
-var str = fs.readFileSync('packet.txt', 'utf-8');
+var str = fs.readFileSync('dump/packet.txt', 'utf-8');
 
 // clean up
 var clean = [];
