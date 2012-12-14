@@ -89,7 +89,7 @@ var raw_send = function (socket, data, cb) {
   cb = cb || noop;
 
   log();
-  log("=========== OUT ===========".blue);
+  log('out ====================================='.blue);
   log();
   log(data);
 
@@ -119,7 +119,7 @@ var handle = function (plist) {
   var selector = plist.__selector.slice(0, -1);
 
   log();
-  log('handle'.green, selector);
+  log('handle'.cyan, selector);
 
   (handlers[selector] || noop)(plist);
 };
@@ -134,8 +134,7 @@ var read_pos = 0;
 socket.on('data', function (data) {
 
   log();
-  log('=========== data ==========='.red);
-  log();
+  log('in ======================================='.red);
 
   // Append this new data to the existing Buffer
   recieved = Buffer.concat([recieved, data]);
@@ -145,18 +144,8 @@ socket.on('data', function (data) {
   // Parse multiple messages in the same packet
   while( data_left_over ) {
   
-    // log('read_pos:', read_pos);
-    // log();
-
     // Store a reference to where we were
     var old_read_pos = read_pos;
-
-    // log();
-    // log('data');
-    // log(data);
-    // log(data.toString().green);
-    // log(data.length);
-    // log('/data');
 
     // Read the prefix (plist length) to see how far to read next
     // It's always 4 bytes long
@@ -172,14 +161,6 @@ socket.on('data', function (data) {
     // Jump forward 4 bytes
     read_pos += 4;
 
-    // log();
-    // log('prefix');
-    // log(prefix);
-    // log(msg_length);
-    // log('%d -> %d', read_pos, read_pos + msg_length);
-    // log('slicing from %d -> %d', read_pos, read_pos + msg_length);
-    // log('/prefix');
-
     // Is there enough data here?
     // If not, jump back to our original position and gtfo
     if( recieved.length < msg_length + read_pos ) {
@@ -189,13 +170,6 @@ socket.on('data', function (data) {
 
     // Extract the main body of the message (where the plist should be)
     var body = recieved.slice(read_pos, msg_length + read_pos);
-
-    // log();
-    // log('body');
-    // log(body);
-    // log(body.toString().green);
-    // log(body.length);
-    // log('/body');
 
     // Extract the plist
     var plist;
@@ -212,7 +186,11 @@ socket.on('data', function (data) {
 
     log();
     log('plist ===================================='.green);
-    log(util.inspect(plist, false, null));
+    log();
+    log(
+      util.inspect(plist, false, null)
+    );
+    log();
     log('=========================================='.green);
 
     // Jump forward the length of the plist
@@ -224,17 +202,10 @@ socket.on('data', function (data) {
     // Is there some left over?
     if( left_over !== 0 ) {
 
-      // log('left_over');
-      // log('%d left over.', left_over);
-      // log('Read pos reset from %d', read_pos);
-
       // Copy what's left over into a new buffer, and save it for next time
       var chunk = new Buffer(left_over);
       recieved.copy(chunk, 0, read_pos);
       recieved = chunk;
-
-      // log('Recieved now %d long', recieved.length);
-      // log('/left_over');
 
     } else {
 
