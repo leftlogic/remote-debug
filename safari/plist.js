@@ -55,11 +55,11 @@ msg.set_sender_key = {
 
 // Action
 
-msg.enable_runtime = {
+msg.enable_inspector = {
   __argument: {
     WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
     WIRSocketDataKey: {
-      method: "Runtime.enable"
+      method: "Inspector.enable"
     },
     WIRConnectionIdentifierKey: conn_id,
     WIRSenderKey: sender_id,
@@ -130,7 +130,7 @@ var send = function () {
 
 var handlers = {
   _rpc_reportConnectedApplicationList: function (plist) {
-    // send(msg.enable_runtime);
+    send(msg.enable_inspector);
   }
 };
 
