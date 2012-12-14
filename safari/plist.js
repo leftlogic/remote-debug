@@ -21,6 +21,42 @@ var conn_id = '41DC39AA-55A7-4C85-9566-B58E6627DD62';
 var sender_id = 'E0F4C128-F4FF-4D45-A538-BA382CD66017';
 
 // ====================================
+// SENDING
+// ====================================
+
+var msg_id = 0;
+
+var raw_send = function (socket, data, cb) {
+
+  cb = cb || noop;
+
+  if( data.__argument && data.__argument.WIRSocketDataKey ) {
+    msg_id += 1;
+    data.__argument.WIRSocketDataKey.id = msg_id;
+    data.__argument.WIRSocketDataKey = JSON.stringify(data.__argument.WIRSocketDataKey);
+  }
+
+  log();
+  log('out ====================================='.blue);
+  log();
+  log(data);
+
+  var plist;
+  try {
+    plist = bplist_create(data);
+  } catch(e) {
+    return console.log(e);
+  }
+
+  socket.write(bufferpack.pack('L', [plist.length]));
+  socket.write(plist, cb);
+};
+
+var send = function () {
+  console.log("Send called before initialised.");
+};
+
+// ====================================
 // MESSAGES
 // ====================================
 
@@ -54,6 +90,26 @@ msg.set_sender_key = {
 };
 
 // Action
+
+msg.indicate_web_view_true = {
+  __argument: {
+    WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
+    WIRIndicateEnabledKey: true,
+    WIRConnectionIdentifierKey: conn_id,
+    WIRPageIdentifierKey: 1
+  },
+  __selector: '_rpc_forwardIndicateWebView:'
+};
+
+msg.indicate_web_view_false = {
+  __argument: {
+    WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
+    WIRIndicateEnabledKey: false,
+    WIRConnectionIdentifierKey: conn_id,
+    WIRPageIdentifierKey: 1
+  },
+  __selector: '_rpc_forwardIndicateWebView:'
+};
 
 msg.enable_inspector = {
   __argument: {
@@ -89,48 +145,28 @@ msg.send_alert = {
 };
 
 // ====================================
-// SENDING
-// ====================================
-
-var msg_id = 0;
-
-var raw_send = function (socket, data, cb) {
-
-  cb = cb || noop;
-
-  if( data.__argument && data.__argument.WIRSocketDataKey ) {
-    msg_id += 1;
-    data.__argument.WIRSocketDataKey.id = msg_id;
-    data.__argument.WIRSocketDataKey = JSON.stringify(data.__argument.WIRSocketDataKey);
-  }
-
-  log();
-  log('out ====================================='.blue);
-  log();
-  log(data);
-
-  var plist;
-  try {
-    plist = bplist_create(data);
-  } catch(e) {
-    return console.log(e);
-  }
-  
-  socket.write(bufferpack.pack('L', [plist.length]));
-  socket.write(plist, cb);
-};
-
-var send = function () {
-  console.log("Send called before initialised.");
-};
-
-// ====================================
 // HANDLERS
 // ====================================
 
 var handlers = {
+  _rpc_reportSetup: function (plist) {
+  },
   _rpc_reportConnectedApplicationList: function (plist) {
-    send(msg.enable_inspector);
+    send(msg.connect_to_app);
+  },
+  _rpc_applicationSentListing: function () {
+    setTimeout(function () {
+      send(msg.indicate_web_view_true);
+    }, 1000);
+
+    setTimeout(function () {
+      send(msg.indicate_web_view_false);
+    }, 1500);
+
+    setInterval(function () {
+      send(msg.set_sender_key);
+      // send(msg.enable_inspector);
+    }, 100);
   }
 };
 
@@ -258,6 +294,4 @@ socket.connect(27753, '::1', function () {
 
   // Connect to Mobile Safari
   send(msg.set_connection_key);
-  send(msg.connect_to_app);
-  send(msg.set_sender_key);
 });
