@@ -47,8 +47,8 @@ msg.set_sender_key = {
   __argument: {
     WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
     WIRConnectionIdentifierKey: conn_id,
-    WIRPageIdentifierKey: 1,
-    WIRSenderKey: sender_id
+    WIRSenderKey: sender_id,
+    WIRPageIdentifierKey: 1
   },
   __selector: '_rpc_forwardSocketSetup:'
 };
@@ -58,10 +58,9 @@ msg.set_sender_key = {
 msg.enable_runtime = {
   __argument: {
     WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
-    WIRSocketDataKey: new Buffer(JSON.stringify({
-      method: "Runtime.enable",
-      id: 1
-    })),
+    WIRSocketDataKey: {
+      method: "Runtime.enable"
+    },
     WIRConnectionIdentifierKey: conn_id,
     WIRSenderKey: sender_id,
     WIRPageIdentifierKey: 1
@@ -72,7 +71,16 @@ msg.enable_runtime = {
 msg.send_alert = {
   __argument: {
     WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
-    WIRSocketDataKey: new Buffer('{"method":"Runtime.evaluate","params":{"expression":"alert(\"Hello\")","objectGroup":"console","includeCommandLineAPI":true,"doNotPauseOnExceptionsAndMuteConsole":true,"returnByValue":false},"id":1}'),
+    WIRSocketDataKey: {
+      method: "Runtime.evaluate",
+      params: {
+        expression: 'alert("Hello")',
+        objectGroup: "console",
+        includeCommandLineAPI: true,
+        doNotPauseOnExceptionsAndMuteConsole: true,
+        returnByValue: false
+      }
+    },
     WIRConnectionIdentifierKey: conn_id,
     WIRSenderKey: sender_id,
     WIRPageIdentifierKey: 1
@@ -84,9 +92,17 @@ msg.send_alert = {
 // SENDING
 // ====================================
 
+var msg_id = 0;
+
 var raw_send = function (socket, data, cb) {
 
   cb = cb || noop;
+
+  if( data.__argument && data.__argument.WIRSocketDataKey ) {
+    msg_id += 1;
+    data.__argument.WIRSocketDataKey.id = msg_id;
+    data.__argument.WIRSocketDataKey = JSON.stringify(data.__argument.WIRSocketDataKey);
+  }
 
   log();
   log('out ====================================='.blue);
@@ -112,7 +128,11 @@ var send = function () {
 // HANDLERS
 // ====================================
 
-var handlers = {};
+var handlers = {
+  _rpc_reportConnectedApplicationList: function (plist) {
+    // send(msg.enable_runtime);
+  }
+};
 
 var handle = function (plist) {
   if( ! plist.__selector ) return;
