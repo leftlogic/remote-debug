@@ -10,16 +10,14 @@ var util = require('util');
 var log = console.log.bind(console);
 var noop = function () {};
 
-var run = false;
-
 // var extract_plist = function (str) {
 //   var buffer = new Buffer(str.split(' ').map(function (val) { return parseInt(val, 16); }));
 //   return bplist_parse.parseBuffer(buffer);
 // };
 
 var socket = new net.Socket({type: 'tcp6'});
-var conn_id = '17858421-36EF-4752-89F7-7A13ED5782C5';
-var sender_id = 'DCAE5BF4-6CA4-4F37-B420-4A2A6B553D0C';
+var conn_id = '41DC39AA-55A7-4C85-9566-B58E6627DD62';
+var sender_id = 'E0F4C128-F4FF-4D45-A538-BA382CD66017';
 
 /* SENDING */
 
@@ -61,19 +59,7 @@ var handlers = {
   },
   _rpc_applicationSentListing: function (plist) {
 
-    if( run ) return log("Run already.".red);
-
-    run = true;
-
-    send({
-      __argument: {
-        WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
-        WIRConnectionIdentifierKey: conn_id,
-        WIRSenderKey: sender_id,
-        WIRPageIdentifierKey: 1
-      },
-      __selector: '_rpc_forwardSocketSetup:'
-    });
+    return;
 
     
     // send({
@@ -226,5 +212,23 @@ socket.connect(27753, '::1', function () {
       WIRConnectionIdentifierKey: conn_id
     },
     __selector : '_rpc_reportIdentifier:'
+  });
+
+  send({
+    __argument: {
+      WIRConnectionIdentifierKey: conn_id,
+      WIRApplicationIdentifierKey: 'com.apple.mobilesafari'
+    },
+    __selector : '_rpc_forwardGetListing:'
+  });
+
+  send({
+    __argument: {
+      WIRApplicationIdentifierKey: 'com.apple.mobilesafari',
+      WIRConnectionIdentifierKey: conn_id,
+      WIRPageIdentifierKey: 1,
+      WIRSenderKey: sender_id
+    },
+    __selector: '_rpc_forwardSocketSetup:'
   });
 });
