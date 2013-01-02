@@ -2,7 +2,7 @@
 
 Current aim: to be able to send a custom command to any target **without** the native debugger via a terminal command.
 
-To see where we're headed, check the [Roadmap](roadmap.md).
+To see where we're headed, check the [Roadmap](/leftlogic/remote-debug/roadmap.md).
 
 ## Platforms
 
