@@ -17,8 +17,8 @@ var noop = function () {};
 // ====================================
 
 var socket = new net.Socket({type: 'tcp6'});
-var conn_id = '41DC39AA-55A7-4C85-9566-B58E6627DD62';
-var sender_id = 'E0F4C128-F4FF-4D45-A538-BA382CD66017';
+var conn_id = uuid.v4();
+var sender_id = uuid.v4();
 
 // ====================================
 // SENDING
@@ -152,21 +152,8 @@ var handlers = {
   _rpc_reportSetup: function (plist) {
   },
   _rpc_reportConnectedApplicationList: function (plist) {
-    send(msg.connect_to_app);
   },
   _rpc_applicationSentListing: function () {
-    setTimeout(function () {
-      send(msg.indicate_web_view_true);
-    }, 1000);
-
-    setTimeout(function () {
-      send(msg.indicate_web_view_false);
-    }, 1500);
-
-    setInterval(function () {
-      send(msg.set_sender_key);
-      // send(msg.enable_inspector);
-    }, 100);
   }
 };
 
@@ -294,4 +281,6 @@ socket.connect(27753, '::1', function () {
 
   // Connect to Mobile Safari
   send(msg.set_connection_key);
+  send(msg.connect_to_app);
+  send(msg.set_sender_key);
 });
