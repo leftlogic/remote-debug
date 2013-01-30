@@ -8,7 +8,8 @@
     "bufferpack": "0.0.6",
     "node-bplist-creator": "~0.0.1",
     "node-uuid": "~1.4.0",
-    "plist": "~0.4.1"
+    "plist": "~0.4.1",
+    "colors": "~0.6.0-1"
   },
   "devDependencies": {},
   "scripts": {
