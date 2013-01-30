@@ -33,7 +33,7 @@ var raw_send = function (socket, data, cb) {
   if( data.__argument && data.__argument.WIRSocketDataKey ) {
     msg_id += 1;
     data.__argument.WIRSocketDataKey.id = msg_id;
-    data.__argument.WIRSocketDataKey = JSON.stringify(data.__argument.WIRSocketDataKey);
+    data.__argument.WIRSocketDataKey = new Buffer(JSON.stringify(data.__argument.WIRSocketDataKey));
   }
 
   log();
@@ -154,6 +154,8 @@ var handlers = {
   _rpc_reportConnectedApplicationList: function (plist) {
   },
   _rpc_applicationSentListing: function () {
+  },
+  _rpc_applicationDisconnected: function (plist) {
   }
 };
 
@@ -283,4 +285,6 @@ socket.connect(27753, '::1', function () {
   send(msg.set_connection_key);
   send(msg.connect_to_app);
   send(msg.set_sender_key);
+  send(msg.enable_inspector);
+  send(msg.send_alert);
 });
