@@ -12,3 +12,7 @@ To see where we're headed, check the [Roadmap](/leftlogic/remote-debug/blob/mast
 - Mobile Safari ... (emulators only - still need to crack USB comms) :trollface:
 - IE10 (?)
 - EVERY OTHER BROWSER :scream:
+
+## License
+
+MIT / http://leftlogic.mit-license.org
