@@ -9,6 +9,6 @@ To see where we're headed, check the [Roadmap](/leftlogic/remote-debug/blob/mast
 - Chrome for Android
 - Opera Mobile ✔ :facepunch:
 - Firefox Beta ✔ :dancers:
-- Mobile Safari ✔ :trollface:
+- Mobile Safari ... (emulators only - still need to crack USB comms) :trollface:
 - IE10 (?)
 - EVERY OTHER BROWSER :scream:
